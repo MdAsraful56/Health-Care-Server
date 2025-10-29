@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import { Request } from 'express';
-import { prisma } from '../../config/db';
+
+import prisma from '../../config/db';
 import { fileUploader } from '../../helpers/fileUploader';
 
 const createPatient = async (req: Request) => {
