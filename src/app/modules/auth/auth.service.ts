@@ -1,7 +1,7 @@
 import { UserStatus } from '@prisma/client';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import prisma from '../../config/db';
+import { JwtHelper } from '../../helpers/jwtHelper';
 
 const login = async (payload: { email: string; password: string }) => {
     // Implement your login logic here
@@ -26,16 +26,22 @@ const login = async (payload: { email: string; password: string }) => {
         throw new Error('Password is incorrect');
     }
 
-    const accessToken = jwt.sign(
-        { email: user.email, role: user.role },
-        'qwe',
-        {
-            algorithm: 'HS256',
-            expiresIn: '1d',
-        }
+    const accessToken = JwtHelper.generateTokens(
+        { userId: user.id, email: user.email },
+        process.env.JWT_ACCESS_SECRET as string,
+        process.env.JWT_ACCESS_EXPIRES_IN as string
     );
+
+    const refreshToken = JwtHelper.generateTokens(
+        { userId: user.id, email: user.email },
+        process.env.JWT_REFRESH_SECRET as string,
+        process.env.JWT_REFRESH_EXPIRES_IN as string
+    );
+
     return {
         accessToken,
+        refreshToken,
+        needPasswordChange: user.needPasswordChange,
     };
 };
 
