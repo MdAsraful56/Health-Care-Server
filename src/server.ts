@@ -2,6 +2,20 @@ import { Server } from 'http';
 import app from './app';
 import config from './app/config';
 
+// dotenv.config();
+
+// let server: Server | null = null;
+
+// async function connectToDB() {
+//     try {
+//         await prisma.$connect();
+//         console.log('DB connection successful!');
+//     } catch (error) {
+//         console.log('DB connection failed!');
+//         process.exit(1);
+//     }
+// }
+
 async function bootstrap() {
     // This variable will hold our server instance
     let server: Server;

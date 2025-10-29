@@ -1,7 +1,7 @@
 import { v2 as cloudinary } from 'cloudinary';
 import multer from 'multer';
 import path from 'path';
-import config from '../../config';
+import config from '../config';
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {

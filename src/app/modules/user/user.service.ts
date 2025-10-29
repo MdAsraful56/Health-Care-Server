@@ -14,18 +14,27 @@ const createPatient = async (req: Request) => {
         process.env.SALT_ROUNDS ? parseInt(process.env.SALT_ROUNDS) : 10
     );
 
-    const result = await prisma.$transaction(async (tnx) => {
-        await tnx.user.create({
-            data: {
-                email: req.body.patient.email,
-                password: hashPassword,
-            },
-        });
+    const result = await prisma.$transaction(
+        async (tnx: {
+            user: {
+                create: (arg0: {
+                    data: { email: string; password: string };
+                }) => any;
+            };
+            patient: { create: (arg0: { data: any }) => any };
+        }) => {
+            await tnx.user.create({
+                data: {
+                    email: req.body.patient.email,
+                    password: hashPassword,
+                },
+            });
 
-        return await tnx.patient.create({
-            data: req.body.patient,
-        });
-    });
+            return await tnx.patient.create({
+                data: req.body.patient,
+            });
+        }
+    );
 
     return result;
 };
