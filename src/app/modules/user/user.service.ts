@@ -112,8 +112,32 @@ const createAdmin = async (req: Request) => {
     return result;
 };
 
+const getAllUsers = async () => {
+    const result = await prisma.user.findMany();
+    return result;
+};
+
+const getAllDoctors = async () => {
+    const result = await prisma.doctor.findMany();
+    return result;
+};
+
+const getAllPatients = async () => {
+    const result = await prisma.patient.findMany();
+    return result;
+};
+
+const getAllAdmins = async () => {
+    const result = await prisma.admin.findMany();
+    return result;
+};
+
 export const UserService = {
     createPatient,
     createDoctor,
     createAdmin,
+    getAllUsers,
+    getAllDoctors,
+    getAllPatients,
+    getAllAdmins,
 };

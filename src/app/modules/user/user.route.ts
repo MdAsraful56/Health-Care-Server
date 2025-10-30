@@ -39,4 +39,12 @@ router.post(
     }
 );
 
+router.get('/all-users', UserController.getAllUsers);
+
+router.get('/all-doctors', UserController.getAllDoctors);
+
+router.get('/all-patients', UserController.getAllPatients);
+
+router.get('/all-admins', UserController.getAllAdmins);
+
 export const userRoutes = router;
