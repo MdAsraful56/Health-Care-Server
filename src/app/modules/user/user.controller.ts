@@ -40,14 +40,15 @@ const createAdmin = catchAsync(async (req: Request, res: Response) => {
 // Get All Users Controller
 const getAllUsers = catchAsync(async (req: Request, res: Response) => {
     const options = pick(req.query, ['page', 'limit', 'sortBy', 'sortOrder']);
-    const filters = pick(req.query, ['searchTerm', 'status', 'role']);
+    const filters = pick(req.query, ['searchTerm', 'status', 'role', 'email']);
 
     const result = await UserService.getAllUsers(filters, options);
     sendResponse(res, {
         statusCode: 200,
         success: true,
         message: 'Users retrieved successfully!',
-        data: result,
+        meta: result.meta,
+        data: result.data,
     });
 });
 
