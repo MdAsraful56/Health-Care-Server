@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import pick from '../../helpers/pick';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { UserService } from './user.service';
@@ -38,7 +39,10 @@ const createAdmin = catchAsync(async (req: Request, res: Response) => {
 
 // Get All Users Controller
 const getAllUsers = catchAsync(async (req: Request, res: Response) => {
-    const result = await UserService.getAllUsers();
+    const options = pick(req.query, ['page', 'limit', 'sortBy', 'sortOrder']);
+    const filters = pick(req.query, ['searchTerm', 'status', 'role']);
+
+    const result = await UserService.getAllUsers(filters, options);
     sendResponse(res, {
         statusCode: 200,
         success: true,

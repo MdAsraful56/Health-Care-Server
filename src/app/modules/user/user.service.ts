@@ -1,8 +1,11 @@
 import bcrypt from 'bcryptjs';
 import { Request } from 'express';
 
+import { Prisma } from '@prisma/client';
 import prisma from '../../config/db';
 import { fileUploader } from '../../helpers/fileUploader';
+import { paginationHelper } from '../../helpers/paginationHelper';
+import { userSearchableFilds } from './user.constant';
 
 const createPatient = async (req: Request) => {
     if (req.file) {
@@ -112,8 +115,46 @@ const createAdmin = async (req: Request) => {
     return result;
 };
 
-const getAllUsers = async () => {
-    const result = await prisma.user.findMany();
+const getAllUsers = async (filters: any, options: any) => {
+    const { page, limit, skip, sortBy, sortOrder } =
+        paginationHelper.calculatePagination(options);
+
+    const { searchTerm, ...filterData } = filters;
+
+    const andConditions: Prisma.UserWhereInput[] = [];
+
+    if (searchTerm) {
+        andConditions.push({
+            OR: userSearchableFilds.map((field) => ({
+                [field]: {
+                    contains: searchTerm,
+                    mode: 'insensitive',
+                },
+            })),
+        });
+    }
+
+    if (Object.keys(filterData).length > 0) {
+        andConditions.push({
+            AND: Object.keys(filterData).map((key) => ({
+                [key]: {
+                    equals: (filterData as any)[key],
+                },
+            })),
+        });
+    }
+
+    const result = await prisma.user.findMany({
+        skip,
+        take: limit,
+
+        where: {
+            AND: andConditions,
+        },
+        orderBy: {
+            [sortBy]: sortOrder,
+        },
+    });
     return result;
 };
 
