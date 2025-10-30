@@ -10,8 +10,8 @@ const generateTokens = (payload: object, secret: Secret, expiresIn: string) => {
     return token as string;
 };
 
-const verifyToken = (token: string, secret: string) => {
-    const verifiedToken = jwt.verify(token, secret);
+const verifyToken = (token: string, secret: Secret) => {
+    const verifiedToken = jwt.verify(token, secret) as jwt.JwtPayload;
     return verifiedToken;
 };
 
