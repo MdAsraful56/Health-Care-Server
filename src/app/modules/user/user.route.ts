@@ -49,6 +49,6 @@ router.get('/all-doctors', UserController.getAllDoctors);
 
 router.get('/all-patients', UserController.getAllPatients);
 
-router.get('/all-admins', UserController.getAllAdmins);
+router.get('/all-admins', auth(UserRole.ADMIN), UserController.getAllAdmins);
 
 export const userRoutes = router;
