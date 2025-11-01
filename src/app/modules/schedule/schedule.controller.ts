@@ -25,7 +25,6 @@ const schedulesForDoctor = catchAsync(
             'sortOrder',
         ]);
         const filters = pick(req.query, ['startDateTime', 'endDateTime']);
-
         const user = req.user;
         const result = await ScheduleService.schedulesForDoctor(
             filters,

@@ -33,7 +33,7 @@ router.post(
 
 router.post(
     '/create-admin',
-    auth(UserRole.ADMIN),
+    // auth(UserRole.ADMIN),
     fileUploader.upload.single('file'),
     (req: Request, res: Response, next: NextFunction) => {
         req.body = UserValidation.createAdminValidationSchema.parse(
@@ -49,6 +49,10 @@ router.get('/all-doctors', UserController.getAllDoctors);
 
 router.get('/all-patients', UserController.getAllPatients);
 
-router.get('/all-admins', auth(UserRole.ADMIN), UserController.getAllAdmins);
+router.get(
+    '/all-admins',
+    auth(UserRole.ADMIN, UserRole.DOCTOR, UserRole.PATIENT),
+    UserController.getAllAdmins
+);
 
 export const userRoutes = router;
