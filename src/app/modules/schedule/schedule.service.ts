@@ -81,7 +81,7 @@ const schedulesForDoctor = async (
     filters: any,
     user: IJWTPayload
 ) => {
-    console.log(options, filters);
+    // console.log(options, filters);
 
     const { page, limit, skip, sortBy, sortOrder } =
         paginationHelper.calculatePagination(options);
@@ -108,16 +108,49 @@ const schedulesForDoctor = async (
         });
     }
 
+    console.log(andConditions);
+
     const whereConditions: Prisma.ScheduleWhereInput =
         andConditions.length > 0 ? { AND: andConditions } : {};
+
+    console.log(whereConditions);
+
+    // const doctorSchedules = await prisma.doctorSchedules.findMany({
+    //     where: {
+    //         doctor: {
+    //             email: user.email,
+    //         },
+    //     },
+    //     select: {
+    //         scheduleId: true,
+    //     },
+    // });
+
+    // const doctorScheduleIds = doctorSchedules.map(
+    //     (schedule) => schedule.scheduleId
+    // );
 
     const result = await prisma.schedule.findMany({
         skip,
         take: limit,
         where: whereConditions,
+        // where: {
+        //     ...whereConditions,
+        //     id: {
+        //         notIn: doctorScheduleIds,
+        //     },
+        // },
     });
 
-    const total = await prisma.schedule.count({ where: whereConditions });
+    const total = await prisma.schedule.count({
+        where: whereConditions,
+        // where: {
+        //     ...whereConditions,
+        //     id: {
+        //         notIn: doctorScheduleIds,
+        //     },
+        // },
+    });
 
     return {
         meta: {

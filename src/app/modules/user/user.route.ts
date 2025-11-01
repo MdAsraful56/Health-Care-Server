@@ -43,7 +43,7 @@ router.post(
     }
 );
 
-router.get('/all-users', auth(UserRole.ADMIN), UserController.getAllUsers);
+router.get('/all-users', UserController.getAllUsers);
 
 router.get('/all-doctors', UserController.getAllDoctors);
 
