@@ -1,4 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
+import httpStatus from 'http-status';
+import ApiError from '../error/ApiError';
 import { JwtHelper } from '../helpers/jwtHelper';
 
 const auth = (...roles: string[]) => {
@@ -11,7 +13,10 @@ const auth = (...roles: string[]) => {
             const token = req.cookies.accessToken;
 
             if (!token) {
-                throw new Error('Unauthorized: No token provided');
+                throw new ApiError(
+                    httpStatus.UNAUTHORIZED,
+                    'No token provided'
+                );
             }
 
             const verifyUser = JwtHelper.verifyToken(
@@ -23,8 +28,9 @@ const auth = (...roles: string[]) => {
             console.log(verifyUser);
 
             if (roles.length && !roles.includes(verifyUser.role)) {
-                throw new Error(
-                    `Forbidden: Role ${verifyUser.role} is not authorized to access this resource`
+                throw new ApiError(
+                    httpStatus.FORBIDDEN,
+                    `Role ${verifyUser.role} is not authorized to access this resource`
                 );
             }
             next();
