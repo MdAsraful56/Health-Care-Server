@@ -7,39 +7,24 @@ import { SpecialtiesValidtaion } from './specialties.validation';
 
 const router = express.Router();
 
-// Task 1: Retrieve Specialties Data
-
-/**
-- Develop an API endpoint to retrieve all specialties data.
-- Implement an HTTP GET endpoint returning specialties in JSON format.
-- ENDPOINT: /specialties
-*/
-router.get('/', SpecialtiesController.getAllFromDB);
+router.get('/get-all-specialties', SpecialtiesController.GetAllSpecialties);
 
 router.post(
-    '/',
+    '/create-specialty',
     fileUploader.upload.single('file'),
+    auth(UserRole.ADMIN),
     (req: Request, res: Response, next: NextFunction) => {
         req.body = SpecialtiesValidtaion.create.parse(
             JSON.parse(req.body.data)
         );
-        return SpecialtiesController.inserIntoDB(req, res, next);
+        return SpecialtiesController.CreateSpecialty(req, res, next);
     }
 );
 
-// Task 2: Delete Specialties Data by ID
-
-/**
-- Develop an API endpoint to delete specialties by ID.
-- Implement an HTTP DELETE endpoint accepting the specialty ID.
-- Delete the specialty from the database and return a success message.
-- ENDPOINT: /specialties/:id
-*/
-
 router.delete(
-    '/:id',
-    auth(UserRole.ADMIN, UserRole.ADMIN),
-    SpecialtiesController.deleteFromDB
+    '/delete-specialty/:id',
+    auth(UserRole.ADMIN),
+    SpecialtiesController.DeleteSpecialty
 );
 
 export const SpecialtiesRoutes = router;
