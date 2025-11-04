@@ -10,11 +10,11 @@
  *4. Schedule Routes --- > create schedule, get all schedules,, delete single schedule.
  *
  *
+ *5. Specialties Routes --- > create specialty, get all specialties, delete specialty.
  *
  *
  *
- *
- *
+ *6. Doctor Schedule Routes --- > create doctor schedule, get my schedule, delete doctor schedule, get all doctor schedules.      ( REad code all )
  *
  *
  *
