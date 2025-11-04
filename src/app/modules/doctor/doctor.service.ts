@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { Prisma, UserRole } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { Request } from 'express';
 import httpStatus from 'http-status';
@@ -28,7 +28,7 @@ const createDoctor = async (req: Request & { file?: Express.Multer.File }) => {
         async (tnx: {
             user: {
                 create: (arg0: {
-                    data: { email: string; password: string };
+                    data: { email: string; password: string; role: UserRole };
                 }) => any;
             };
             doctor: { create: (arg0: { data: any }) => any };
@@ -37,6 +37,7 @@ const createDoctor = async (req: Request & { file?: Express.Multer.File }) => {
                 data: {
                     email: req.body.doctor.email,
                     password: hashPassword,
+                    role: UserRole.DOCTOR,
                 },
             });
 
@@ -49,7 +50,7 @@ const createDoctor = async (req: Request & { file?: Express.Multer.File }) => {
     return result;
 };
 
-const getAllDoctorsFromDB = async (filters: any, options: any) => {
+const getAllDoctors = async (filters: any, options: any) => {
     const { page, limit, skip, sortBy, sortOrder } =
         paginationHelper.calculatePagination(options);
 
@@ -100,7 +101,7 @@ const getAllDoctorsFromDB = async (filters: any, options: any) => {
     };
 };
 
-const updateDoctorInDB = async (
+const updateDoctor = async (
     id: string,
     payload: Partial<IDoctorUpdateInput>
 ) => {
@@ -157,7 +158,31 @@ const updateDoctorInDB = async (
     });
 };
 
-const getAISuggestionFromDB = async (payload: { symptoms: string }) => {
+const getSingleDoctor = async (id: string) => {
+    const doctor = await prisma.doctor.findUniqueOrThrow({
+        where: { id, isDeleted: false },
+        include: {
+            doctorSpecialties: {
+                include: {
+                    specialities: true,
+                },
+            },
+        },
+    });
+
+    return doctor;
+};
+
+const deleteDoctor = async (id: string) => {
+    const doctor = await prisma.doctor.update({
+        where: { id },
+        data: { isDeleted: true },
+    });
+
+    return doctor;
+};
+
+const getAISuggestion = async (payload: { symptoms: string }) => {
     // Implement your logic to get AI suggestions based on the payload
     if (!(payload && payload.symptoms)) {
         throw new ApiError(httpStatus.BAD_REQUEST, 'Symptoms are required');
@@ -208,7 +233,9 @@ Return your response in JSON format with full individual doctor data.
 
 export const DoctorService = {
     createDoctor,
-    getAllDoctorsFromDB,
-    updateDoctorInDB,
-    getAISuggestionFromDB,
+    getAllDoctors,
+    updateDoctor,
+    getSingleDoctor,
+    deleteDoctor,
+    getAISuggestion,
 };

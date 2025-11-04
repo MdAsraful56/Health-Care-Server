@@ -100,14 +100,17 @@ const getAllPatients = async (filters: any, options: any) => {
 
 const getSinglePatient = async (patientId: string) => {
     const result = await prisma.patient.findUnique({
-        where: { id: patientId },
+        where: {
+            id: patientId,
+            isDeleted: false,
+        },
     });
     return result;
 };
 
 const updatePatient = async (patientId: string, payload: any) => {
     const result = await prisma.patient.update({
-        where: { id: patientId },
+        where: { id: patientId, isDeleted: false },
         data: payload,
     });
     return result;
@@ -115,7 +118,7 @@ const updatePatient = async (patientId: string, payload: any) => {
 
 const deletePatient = async (patientId: string) => {
     const result = await prisma.patient.update({
-        where: { id: patientId },
+        where: { id: patientId, isDeleted: false },
         data: { isDeleted: true },
     });
     return result;

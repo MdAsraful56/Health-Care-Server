@@ -21,6 +21,10 @@ const moduleRoutes = [
         route: adminRouters,
     },
     {
+        path: '/doctor',
+        route: DoctorRoutes,
+    },
+    {
         path: '/auth',
         route: authRoutes,
     },
@@ -36,10 +40,7 @@ const moduleRoutes = [
         path: '/specialties',
         route: SpecialtiesRoutes,
     },
-    {
-        path: '/doctor',
-        route: DoctorRoutes,
-    },
+
     {
         path: '/appointments',
         route: appointmentRouter,

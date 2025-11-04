@@ -9,6 +9,19 @@ const createDoctorValidationSchema = z.object({
     }),
 });
 
+const updateDoctorValidationSchema = z.object({
+    name: z.string().optional(),
+    contactNumber: z.string().optional(),
+    address: z.string().optional(),
+    registrationNumber: z.string().optional(),
+    experience: z.number().optional(),
+    qualification: z.string().optional(),
+    currentWorkingPlace: z.string().optional(),
+    designation: z.string().optional(),
+    appointmentFee: z.number().optional(),
+});
+
 export const DoctorValidation = {
     createDoctorValidationSchema,
+    updateDoctorValidationSchema,
 };
