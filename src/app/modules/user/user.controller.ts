@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import httpStatus from 'http-status';
 import pick from '../../helpers/pick';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
@@ -15,24 +16,40 @@ const createPatient = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-// Create Doctor Controller
-const createDoctor = catchAsync(async (req: Request, res: Response) => {
-    const result = await UserService.createDoctor(req);
+// Get All Patients Controller
+const getAllPatients = catchAsync(async (req: Request, res: Response) => {
+    const options = pick(req.query, ['page', 'limit', 'sortBy', 'sortOrder']);
+    const filters = pick(req.query, ['searchTerm', 'status', 'role', 'email']);
+    const result = await UserService.getAllPatients(filters, options);
     sendResponse(res, {
-        statusCode: 201,
+        statusCode: 200,
         success: true,
-        message: 'Doctor created successfully!',
+        message: 'Patients retrieved successfully!',
         data: result,
     });
 });
 
-// Create Admin Controller
-const createAdmin = catchAsync(async (req: Request, res: Response) => {
-    const result = await UserService.createAdmin(req);
+const UpdatePatient = catchAsync(async (req: Request, res: Response) => {
+    const patientId = req.params.id;
+    const result = await UserService.updatePatient(
+        patientId as string,
+        req.body
+    );
     sendResponse(res, {
-        statusCode: 201,
+        statusCode: httpStatus.OK,
         success: true,
-        message: 'Admin created successfully!',
+        message: 'Patient updated successfully!',
+        data: result,
+    });
+});
+
+const DeletePatient = catchAsync(async (req: Request, res: Response) => {
+    const patientId = req.params.id;
+    const result = await UserService.deletePatient(patientId);
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Patient deleted successfully!',
         data: result,
     });
 });
@@ -52,45 +69,10 @@ const getAllUsers = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-// Get All Doctors Controller
-const getAllDoctors = catchAsync(async (req: Request, res: Response) => {
-    const result = await UserService.getAllDoctors();
-    sendResponse(res, {
-        statusCode: 200,
-        success: true,
-        message: 'Doctors retrieved successfully!',
-        data: result,
-    });
-});
-
-// Get All Patients Controller
-const getAllPatients = catchAsync(async (req: Request, res: Response) => {
-    const result = await UserService.getAllPatients();
-    sendResponse(res, {
-        statusCode: 200,
-        success: true,
-        message: 'Patients retrieved successfully!',
-        data: result,
-    });
-});
-
-// Get All Admins Controller
-const getAllAdmins = catchAsync(async (req: Request, res: Response) => {
-    const result = await UserService.getAllAdmins();
-    sendResponse(res, {
-        statusCode: 200,
-        success: true,
-        message: 'Admins retrieved successfully!',
-        data: result,
-    });
-});
-
 export const UserController = {
     createPatient,
-    createDoctor,
-    createAdmin,
-    getAllUsers,
-    getAllDoctors,
     getAllPatients,
-    getAllAdmins,
+    UpdatePatient,
+    DeletePatient,
+    getAllUsers,
 };

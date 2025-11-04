@@ -3,6 +3,7 @@ import { appointmentRouter } from '../modules/appointment/appointment.route';
 import { authRoutes } from '../modules/auth/auth.routes';
 import { DoctorRoutes } from '../modules/doctor/doctor.route';
 import { doctorScheduleRoutes } from '../modules/doctorSchedule/doctorSchedule.route';
+import { PaymentRoute } from '../modules/payment/payment.route';
 import { scheduleRoutes } from '../modules/schedule/schedule.route';
 import { SpecialtiesRoutes } from '../modules/specialties/specialties.route';
 import { userRoutes } from '../modules/user/user.route';
@@ -37,6 +38,10 @@ const moduleRoutes = [
     {
         path: '/appointments',
         route: appointmentRouter,
+    },
+    {
+        path: '/payment',
+        route: PaymentRoute,
     },
 ];
 

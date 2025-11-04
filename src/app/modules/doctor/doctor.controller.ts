@@ -5,6 +5,17 @@ import sendResponse from '../../utils/sendResponse';
 import { doctorFilterableFields } from './doctor.constant';
 import { DoctorService } from './doctor.service';
 
+// Create Doctor Controller
+const CreateDoctor = catchAsync(async (req: Request, res: Response) => {
+    const result = await DoctorService.createDoctor(req);
+    sendResponse(res, {
+        statusCode: 201,
+        success: true,
+        message: 'Doctor created successfully!',
+        data: result,
+    });
+});
+
 const getAllDoctors = catchAsync(async (req: Request, res: Response) => {
     const options = pick(req.query, ['page', 'limit', 'sortBy', 'sortOrder']);
     const filters = pick(req.query, doctorFilterableFields);
@@ -44,6 +55,7 @@ const getAISuggestion = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const DoctorController = {
+    CreateDoctor,
     getAllDoctors,
     updateDoctor,
     getAISuggestion,

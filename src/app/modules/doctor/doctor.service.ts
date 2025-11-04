@@ -1,12 +1,53 @@
 import { Prisma } from '@prisma/client';
+import bcrypt from 'bcryptjs';
+import { Request } from 'express';
 import httpStatus from 'http-status';
+import config from '../../config';
 import prisma from '../../config/db';
 import ApiError from '../../error/ApiError';
 import { extractJsonFromMessage } from '../../helpers/extractJsonFromMessage';
+import { fileUploader } from '../../helpers/fileUploader';
 import { openai } from '../../helpers/openAIsdk';
 import { paginationHelper } from '../../helpers/paginationHelper';
 import { doctorSearchableFields } from './doctor.constant';
 import { IDoctorUpdateInput } from './doctor.interface';
+
+// Create Doctor Service
+const createDoctor = async (req: Request & { file?: Express.Multer.File }) => {
+    if (req.file) {
+        const uploadResult = await fileUploader.uploadToCloudinary(req.file);
+        req.body.doctor.profilePhoto = uploadResult?.secure_url;
+    }
+
+    const hashPassword = await bcrypt.hash(
+        req.body.password,
+        config.salt_rounds ? parseInt(config.salt_rounds) : 10
+    );
+
+    const result = await prisma.$transaction(
+        async (tnx: {
+            user: {
+                create: (arg0: {
+                    data: { email: string; password: string };
+                }) => any;
+            };
+            doctor: { create: (arg0: { data: any }) => any };
+        }) => {
+            await tnx.user.create({
+                data: {
+                    email: req.body.doctor.email,
+                    password: hashPassword,
+                },
+            });
+
+            return await tnx.doctor.create({
+                data: req.body.doctor,
+            });
+        }
+    );
+
+    return result;
+};
 
 const getAllDoctorsFromDB = async (filters: any, options: any) => {
     const { page, limit, skip, sortBy, sortOrder } =
@@ -166,6 +207,7 @@ Return your response in JSON format with full individual doctor data.
 };
 
 export const DoctorService = {
+    createDoctor,
     getAllDoctorsFromDB,
     updateDoctorInDB,
     getAISuggestionFromDB,
