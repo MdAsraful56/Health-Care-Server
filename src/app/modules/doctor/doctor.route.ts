@@ -7,4 +7,6 @@ router.get('/get-all-doctors', DoctorController.getAllDoctors);
 
 router.patch('/update-doctor/:id', DoctorController.updateDoctor);
 
+router.post('/suggestion', DoctorController.getAISuggestion);
+
 export const DoctorRoutes = router;
