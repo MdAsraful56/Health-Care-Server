@@ -31,7 +31,7 @@ const createAppointment = async (
     const result = await prisma.$transaction(async (tnx: any) => {
         const appointmentData = await tnx.appointment.create({
             data: {
-                doctorId: doctorData.doctorId,
+                doctorId: doctorData.id,
                 patientId: pasientDate.id,
                 scheduleId: payload.scheduleId,
                 videoCallingId: videoCallingId,
@@ -49,7 +49,20 @@ const createAppointment = async (
                 isBooked: true,
             },
         });
+
+        const transactionId = uuidv4();
+
+        await tnx.payment.create({
+            data: {
+                appointmentId: appointmentData.id,
+                amount: doctorData.appointmentFee,
+                transactionId,
+            },
+        });
+
+        return appointmentData;
     });
+    return result;
 };
 
 export const AppointmentService = {
