@@ -20,13 +20,23 @@ router.post(
     }
 );
 
-router.get('/all-patients', UserController.getAllPatients);
+router.get(
+    '/all-patients',
+    auth(UserRole.ADMIN),
+    UserController.getAllPatients
+);
 
 router.patch(
     '/update-patient/:id',
     auth(UserRole.ADMIN, UserRole.PATIENT),
     validateRequest(UserValidation.updatePatientValidationSchema),
     UserController.UpdatePatient
+);
+
+router.get(
+    '/get-single-patient/:id',
+    auth(UserRole.ADMIN, UserRole.PATIENT),
+    UserController.getSinglePatient
 );
 
 router.delete('/delete-patient/:id', UserController.DeletePatient);

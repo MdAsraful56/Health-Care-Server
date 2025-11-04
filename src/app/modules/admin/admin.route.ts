@@ -1,5 +1,8 @@
+import { UserRole } from '@prisma/client';
 import express, { NextFunction, Request, Response } from 'express';
 import { fileUploader } from '../../helpers/fileUploader';
+import auth from '../../middlewares/auth';
+import validateRequest from '../../middlewares/validateRequest';
 import { AdminController } from './admin.controller';
 import { AdminValidation } from './admin.validation';
 
@@ -17,4 +20,21 @@ router.post(
     }
 );
 
-export default router;
+router.get('/all-admins', auth(UserRole.ADMIN), AdminController.GetAllAdmins);
+
+router.patch(
+    '/update-admin/:id',
+    auth(UserRole.ADMIN),
+    validateRequest(AdminValidation.updateAdminValidationSchema),
+    AdminController.UpdateAdmin
+);
+
+router.get(
+    '/get-single-admin/:id',
+    auth(UserRole.ADMIN),
+    AdminController.GetSingleAdmin
+);
+
+router.delete('/delete-admin/:id', AdminController.DeleteAdmin);
+
+export const adminRouters = router;

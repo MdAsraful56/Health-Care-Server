@@ -9,6 +9,14 @@ const createAdminValidationSchema = z.object({
     }),
 });
 
+const updateAdminValidationSchema = z.object({
+    password: z.string().optional(),
+    name: z.string().optional(),
+    email: z.string().optional(),
+    contactNumber: z.string().optional(),
+});
+
 export const AdminValidation = {
     createAdminValidationSchema,
+    updateAdminValidationSchema,
 };

@@ -98,6 +98,13 @@ const getAllPatients = async (filters: any, options: any) => {
     };
 };
 
+const getSinglePatient = async (patientId: string) => {
+    const result = await prisma.patient.findUnique({
+        where: { id: patientId },
+    });
+    return result;
+};
+
 const updatePatient = async (patientId: string, payload: any) => {
     const result = await prisma.patient.update({
         where: { id: patientId },
@@ -172,6 +179,7 @@ const getAllUsers = async (filters: any, options: any) => {
 export const UserService = {
     createPatient,
     getAllPatients,
+    getSinglePatient,
     updatePatient,
     deletePatient,
     getAllUsers,

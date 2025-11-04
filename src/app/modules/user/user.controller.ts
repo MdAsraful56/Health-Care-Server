@@ -29,6 +29,18 @@ const getAllPatients = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
+const getSinglePatient = catchAsync(async (req: Request, res: Response) => {
+    const patientId = req.params.id;
+    const result = await UserService.getSinglePatient(patientId);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Patient retrieved successfully!',
+        data: result,
+    });
+});
+
 const UpdatePatient = catchAsync(async (req: Request, res: Response) => {
     const patientId = req.params.id;
     const result = await UserService.updatePatient(
@@ -72,6 +84,7 @@ const getAllUsers = catchAsync(async (req: Request, res: Response) => {
 export const UserController = {
     createPatient,
     getAllPatients,
+    getSinglePatient,
     UpdatePatient,
     DeletePatient,
     getAllUsers,
