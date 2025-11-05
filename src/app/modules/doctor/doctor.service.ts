@@ -106,7 +106,9 @@ const updateDoctor = async (
     payload: Partial<IDoctorUpdateInput>
 ) => {
     const doctorInfo = await prisma.doctor.findUniqueOrThrow({
-        where: { id },
+        where: {
+            id,
+        },
     });
 
     const { specialties, ...doctorData } = payload;
@@ -140,11 +142,11 @@ const updateDoctor = async (
             }
         }
 
-        const updatedDoctor = await tnx.doctor.update({
+        const updatedData = await tnx.doctor.update({
             where: {
                 id: doctorInfo.id,
             },
-            data: doctorData,
+            data: doctorData as Prisma.DoctorUpdateInput,
             include: {
                 doctorSpecialties: {
                     include: {
@@ -154,7 +156,7 @@ const updateDoctor = async (
             },
         });
 
-        return updatedDoctor;
+        return updatedData;
     });
 };
 

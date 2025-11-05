@@ -1,5 +1,10 @@
 import z from 'zod';
 
+const specialtySchema = z.object({
+    specialtyId: z.string().uuid(),
+    isDeleted: z.boolean().optional(),
+});
+
 const createDoctorValidationSchema = z.object({
     password: z.string().nonempty('Password is required'),
     doctor: z.object({
@@ -19,6 +24,7 @@ const updateDoctorValidationSchema = z.object({
     currentWorkingPlace: z.string().optional(),
     designation: z.string().optional(),
     appointmentFee: z.number().optional(),
+    specialties: z.array(specialtySchema).optional(),
 });
 
 export const DoctorValidation = {
