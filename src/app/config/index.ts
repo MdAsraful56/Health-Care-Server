@@ -19,4 +19,5 @@ export default {
     },
     openrouter_api_key: process.env.OPENROUTER_API_KEY,
     stripe_secret_key: process.env.STRIPE_SECRET_KEY,
+    webhookSecret: process.env.webhookSecret,
 };
