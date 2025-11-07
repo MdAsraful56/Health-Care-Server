@@ -25,7 +25,6 @@ const auth = (...roles: string[]) => {
             );
 
             req.user = verifyUser;
-            console.log(verifyUser);
 
             if (roles.length && !roles.includes(verifyUser.role)) {
                 throw new ApiError(

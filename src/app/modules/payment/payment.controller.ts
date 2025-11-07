@@ -2,13 +2,17 @@ import { Request, Response } from 'express';
 import config from '../../config';
 import { stripe } from '../../helpers/stripe';
 import catchAsync from '../../utils/catchAsync';
-import sendResponse from '../../utils/sendResponse';
 import { PaymentService } from './payment.service';
 
 const handleStripeWebhookEvent = catchAsync(
     async (req: Request, res: Response) => {
         const sig = req.headers['stripe-signature'] as string;
         const webhookSecret = config.webhookSecret as string;
+
+        if (!sig) {
+            console.error('⚠️ No stripe-signature header found');
+            return res.status(400).send('No stripe signature found');
+        }
 
         let event;
         try {
@@ -17,6 +21,8 @@ const handleStripeWebhookEvent = catchAsync(
                 sig,
                 webhookSecret
             );
+
+            console.log('✅ Webhook verified successfully:', event.type);
         } catch (err: any) {
             console.error(
                 '⚠️ Webhook signature verification failed:',
@@ -24,14 +30,15 @@ const handleStripeWebhookEvent = catchAsync(
             );
             return res.status(400).send(`Webhook Error: ${err.message}`);
         }
-        const result = await PaymentService.handleStripeWebhookEvent(event);
 
-        sendResponse(res, {
-            statusCode: 200,
-            success: true,
-            message: 'Webhook req send successfully',
-            data: result,
-        });
+        try {
+            await PaymentService.handleStripeWebhookEvent(event);
+
+            return res.status(200).json({ received: true });
+        } catch (error: any) {
+            console.error('Error processing webhook:', error);
+            return res.status(500).json({ error: 'Webhook processing failed' });
+        }
     }
 );
 

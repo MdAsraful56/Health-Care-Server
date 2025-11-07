@@ -1,39 +1,50 @@
-import Stripe from 'stripe';
-
 import { PaymentStatus } from '@prisma/client';
+import Stripe from 'stripe';
 import prisma from '../../config/db';
 
 const handleStripeWebhookEvent = async (event: Stripe.Event) => {
+    console.log('📥 Processing webhook event:', event.type);
+
     switch (event.type) {
         case 'checkout.session.completed': {
-            const session = event.data.object as any;
+            const session = event.data.object as Stripe.Checkout.Session;
 
             const appointmentId = session.metadata?.appointmentId;
             const paymentId = session.metadata?.paymentId;
 
-            await prisma.appointment.update({
-                where: {
-                    id: appointmentId,
-                },
-                data: {
-                    paymentStatus:
-                        session.payment_status === 'paid'
-                            ? PaymentStatus.PAID
-                            : PaymentStatus.UNPAID,
-                },
-            });
+            console.log('📋 Metadata:', { appointmentId, paymentId });
+            console.log('💳 Payment Status:', session.payment_status);
 
-            await prisma.payment.update({
-                where: {
-                    id: paymentId,
-                },
-                data: {
-                    status:
-                        session.payment_status === 'paid'
-                            ? PaymentStatus.PAID
-                            : PaymentStatus.UNPAID,
-                    paymentGatewayData: session,
-                },
+            if (!appointmentId || !paymentId) {
+                console.error('❌ Missing metadata in session');
+                throw new Error(
+                    'Missing appointmentId or paymentId in metadata'
+                );
+            }
+
+            // Transaction ব্যবহার করে atomically update করুন
+            await prisma.$transaction(async (tx) => {
+                const paymentStatus =
+                    session.payment_status === 'paid'
+                        ? PaymentStatus.PAID
+                        : PaymentStatus.UNPAID;
+
+                // Appointment update
+                const updatedAppointment = await tx.appointment.update({
+                    where: { id: appointmentId },
+                    data: { paymentStatus },
+                });
+                console.log('✅ Appointment updated:', updatedAppointment.id);
+
+                // Payment update
+                const updatedPayment = await tx.payment.update({
+                    where: { id: paymentId },
+                    data: {
+                        status: paymentStatus,
+                        paymentGatewayData: session as any,
+                    },
+                });
+                console.log('✅ Payment updated:', updatedPayment.id);
             });
 
             break;

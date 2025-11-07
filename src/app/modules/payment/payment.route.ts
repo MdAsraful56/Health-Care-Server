@@ -1,9 +1,9 @@
 import express from 'express';
+import { PaymentController } from './payment.controller';
 
 const router = express.Router();
 
-router.get('/payment/status', (req, res) => {
-    res.send('Payment status endpoint');
-});
+// Webhook route - এটা অবশ্যই আলাদাভাবে handle করতে হবে
+router.post('/webhook', PaymentController.handleStripeWebhookEvent);
 
-export const PaymentRoute = router;
+export const PaymentRoutes = router;
