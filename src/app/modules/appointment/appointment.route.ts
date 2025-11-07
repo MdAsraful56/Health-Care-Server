@@ -11,6 +11,12 @@ router.post(
     AppointmentController.CreateAppointment
 );
 
+router.get(
+    '/get-my-appointments',
+    auth(UserRole.PATIENT, UserRole.DOCTOR),
+    AppointmentController.GetMyAppointments
+);
+
 router.get('/get-appointment/:id', (req, res) => {
     // Handle fetching a specific appointment
 });
