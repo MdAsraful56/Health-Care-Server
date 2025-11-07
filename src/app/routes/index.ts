@@ -1,8 +1,11 @@
 import express from 'express';
+import { adminRouters } from '../modules/admin/admin.route';
 import { appointmentRouter } from '../modules/appointment/appointment.route';
 import { authRoutes } from '../modules/auth/auth.routes';
 import { DoctorRoutes } from '../modules/doctor/doctor.route';
 import { doctorScheduleRoutes } from '../modules/doctorSchedule/doctorSchedule.route';
+import { PaymentRoutes } from '../modules/payment/payment.route';
+import { prescriptionRouters } from '../modules/prescription/prescription.route';
 import { scheduleRoutes } from '../modules/schedule/schedule.route';
 import { SpecialtiesRoutes } from '../modules/specialties/specialties.route';
 import { userRoutes } from '../modules/user/user.route';
@@ -13,6 +16,14 @@ const moduleRoutes = [
     {
         path: '/user',
         route: userRoutes,
+    },
+    {
+        path: '/admin',
+        route: adminRouters,
+    },
+    {
+        path: '/doctor',
+        route: DoctorRoutes,
     },
     {
         path: '/auth',
@@ -30,13 +41,18 @@ const moduleRoutes = [
         path: '/specialties',
         route: SpecialtiesRoutes,
     },
-    {
-        path: '/doctor',
-        route: DoctorRoutes,
-    },
+
     {
         path: '/appointments',
         route: appointmentRouter,
+    },
+    {
+        path: '/payment',
+        route: PaymentRoutes,
+    },
+    {
+        path: '/prescription',
+        route: prescriptionRouters,
     },
 ];
 

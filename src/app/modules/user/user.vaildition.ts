@@ -9,26 +9,13 @@ const createPatientValidationSchema = z.object({
     }),
 });
 
-const createDoctorValidationSchema = z.object({
-    password: z.string().nonempty('Password is required'),
-    doctor: z.object({
-        name: z.string().nonempty('Name is required'),
-        email: z.string().nonempty('Email is required'),
-        gender: z.string().nonempty('Gender is required'),
-    }),
-});
-
-const createAdminValidationSchema = z.object({
-    password: z.string().nonempty('Password is required'),
-    admin: z.object({
-        name: z.string().nonempty('Name is required'),
-        email: z.string().nonempty('Email is required'),
-        contactNumber: z.string().nonempty('Contact Number is required'),
-    }),
+const updatePatientValidationSchema = z.object({
+    name: z.string().optional(),
+    email: z.string().optional(),
+    address: z.string().optional(),
 });
 
 export const UserValidation = {
     createPatientValidationSchema,
-    createDoctorValidationSchema,
-    createAdminValidationSchema,
+    updatePatientValidationSchema,
 };

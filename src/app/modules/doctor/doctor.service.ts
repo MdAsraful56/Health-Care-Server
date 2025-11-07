@@ -1,14 +1,56 @@
-import { Prisma } from '@prisma/client';
+import { Prisma, UserRole } from '@prisma/client';
+import bcrypt from 'bcryptjs';
+import { Request } from 'express';
 import httpStatus from 'http-status';
+import config from '../../config';
 import prisma from '../../config/db';
 import ApiError from '../../error/ApiError';
 import { extractJsonFromMessage } from '../../helpers/extractJsonFromMessage';
+import { fileUploader } from '../../helpers/fileUploader';
 import { openai } from '../../helpers/openAIsdk';
 import { paginationHelper } from '../../helpers/paginationHelper';
 import { doctorSearchableFields } from './doctor.constant';
 import { IDoctorUpdateInput } from './doctor.interface';
 
-const getAllDoctorsFromDB = async (filters: any, options: any) => {
+// Create Doctor Service
+const createDoctor = async (req: Request & { file?: Express.Multer.File }) => {
+    if (req.file) {
+        const uploadResult = await fileUploader.uploadToCloudinary(req.file);
+        req.body.doctor.profilePhoto = uploadResult?.secure_url;
+    }
+
+    const hashPassword = await bcrypt.hash(
+        req.body.password,
+        config.salt_rounds ? parseInt(config.salt_rounds) : 10
+    );
+
+    const result = await prisma.$transaction(
+        async (tnx: {
+            user: {
+                create: (arg0: {
+                    data: { email: string; password: string; role: UserRole };
+                }) => any;
+            };
+            doctor: { create: (arg0: { data: any }) => any };
+        }) => {
+            await tnx.user.create({
+                data: {
+                    email: req.body.doctor.email,
+                    password: hashPassword,
+                    role: UserRole.DOCTOR,
+                },
+            });
+
+            return await tnx.doctor.create({
+                data: req.body.doctor,
+            });
+        }
+    );
+
+    return result;
+};
+
+const getAllDoctors = async (filters: any, options: any) => {
     const { page, limit, skip, sortBy, sortOrder } =
         paginationHelper.calculatePagination(options);
 
@@ -59,12 +101,14 @@ const getAllDoctorsFromDB = async (filters: any, options: any) => {
     };
 };
 
-const updateDoctorInDB = async (
+const updateDoctor = async (
     id: string,
     payload: Partial<IDoctorUpdateInput>
 ) => {
     const doctorInfo = await prisma.doctor.findUniqueOrThrow({
-        where: { id },
+        where: {
+            id,
+        },
     });
 
     const { specialties, ...doctorData } = payload;
@@ -98,11 +142,11 @@ const updateDoctorInDB = async (
             }
         }
 
-        const updatedDoctor = await tnx.doctor.update({
+        const updatedData = await tnx.doctor.update({
             where: {
                 id: doctorInfo.id,
             },
-            data: doctorData,
+            data: doctorData as Prisma.DoctorUpdateInput,
             include: {
                 doctorSpecialties: {
                     include: {
@@ -112,11 +156,35 @@ const updateDoctorInDB = async (
             },
         });
 
-        return updatedDoctor;
+        return updatedData;
     });
 };
 
-const getAISuggestionFromDB = async (payload: { symptoms: string }) => {
+const getSingleDoctor = async (id: string) => {
+    const doctor = await prisma.doctor.findUniqueOrThrow({
+        where: { id, isDeleted: false },
+        include: {
+            doctorSpecialties: {
+                include: {
+                    specialities: true,
+                },
+            },
+        },
+    });
+
+    return doctor;
+};
+
+const deleteDoctor = async (id: string) => {
+    const doctor = await prisma.doctor.update({
+        where: { id },
+        data: { isDeleted: true },
+    });
+
+    return doctor;
+};
+
+const getAISuggestion = async (payload: { symptoms: string }) => {
     // Implement your logic to get AI suggestions based on the payload
     if (!(payload && payload.symptoms)) {
         throw new ApiError(httpStatus.BAD_REQUEST, 'Symptoms are required');
@@ -166,7 +234,10 @@ Return your response in JSON format with full individual doctor data.
 };
 
 export const DoctorService = {
-    getAllDoctorsFromDB,
-    updateDoctorInDB,
-    getAISuggestionFromDB,
+    createDoctor,
+    getAllDoctors,
+    updateDoctor,
+    getSingleDoctor,
+    deleteDoctor,
+    getAISuggestion,
 };

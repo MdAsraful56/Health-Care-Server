@@ -7,7 +7,7 @@ export default {
     node_env: process.env.NODE_ENV,
     port: process.env.PORT,
     database_url: process.env.DATABASE_URL,
-    sold_number: process.env.SOLD_NUMBER,
+    salt_rounds: process.env.SALT_ROUNDS,
     jwt_access_secret: process.env.JWT_ACCESS_SECRET,
     jwt_refresh_secret: process.env.JWT_REFRESH_SECRET,
     jwt_access_expires_in: process.env.JWT_ACCESS_EXPIRES_IN,
@@ -18,4 +18,6 @@ export default {
         api_secret: process.env.CLOUDINARY_API_SECRET || '',
     },
     openrouter_api_key: process.env.OPENROUTER_API_KEY,
+    stripe_secret_key: process.env.STRIPE_SECRET_KEY,
+    webhookSecret: process.env.webhookSecret,
 };

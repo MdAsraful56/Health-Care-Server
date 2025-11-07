@@ -3,6 +3,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import { UserRole } from '@prisma/client';
 import { fileUploader } from '../../helpers/fileUploader';
 import auth from '../../middlewares/auth';
+import validateRequest from '../../middlewares/validateRequest';
 import { UserController } from './user.controller';
 import { UserValidation } from './user.vaildition';
 
@@ -19,40 +20,27 @@ router.post(
     }
 );
 
-router.post(
-    '/create-doctor',
-    // auth(UserRole.ADMIN),
-    fileUploader.upload.single('file'),
-    (req: Request, res: Response, next: NextFunction) => {
-        req.body = UserValidation.createDoctorValidationSchema.parse(
-            JSON.parse(req.body.data)
-        );
-        return UserController.createDoctor(req, res, next);
-    }
+router.get(
+    '/all-patients',
+    auth(UserRole.ADMIN),
+    UserController.getAllPatients
 );
 
-router.post(
-    '/create-admin',
-    // auth(UserRole.ADMIN),
-    fileUploader.upload.single('file'),
-    (req: Request, res: Response, next: NextFunction) => {
-        req.body = UserValidation.createAdminValidationSchema.parse(
-            JSON.parse(req.body.data)
-        );
-        return UserController.createAdmin(req, res, next);
-    }
+router.patch(
+    '/update-patient/:id',
+    auth(UserRole.ADMIN, UserRole.PATIENT),
+    validateRequest(UserValidation.updatePatientValidationSchema),
+    UserController.UpdatePatient
 );
-
-router.get('/all-users', UserController.getAllUsers);
-
-router.get('/all-doctors', UserController.getAllDoctors);
-
-router.get('/all-patients', UserController.getAllPatients);
 
 router.get(
-    '/all-admins',
-    auth(UserRole.ADMIN, UserRole.DOCTOR, UserRole.PATIENT),
-    UserController.getAllAdmins
+    '/get-single-patient/:id',
+    auth(UserRole.ADMIN, UserRole.PATIENT),
+    UserController.getSinglePatient
 );
+
+router.delete('/delete-patient/:id', UserController.DeletePatient);
+
+router.get('/all-users', auth(UserRole.ADMIN), UserController.getAllUsers);
 
 export const userRoutes = router;

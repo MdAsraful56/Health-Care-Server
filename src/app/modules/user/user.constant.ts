@@ -1,1 +1,3 @@
-export const userSearchableFilds = ['email'];
+export const userSearchableFields = ['email'];
+
+export const patientSearchableFields = ['email', 'name'];

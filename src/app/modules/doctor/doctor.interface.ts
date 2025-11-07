@@ -1,5 +1,3 @@
-import { Gender } from '@prisma/client';
-
 export type IDoctorUpdateInput = {
     email: string;
     contactNumber: string;
@@ -18,3 +16,15 @@ export type IDoctorUpdateInput = {
         isDeleted?: boolean;
     }[];
 };
+
+export interface createDocterInput {
+    name: string;
+    email: string;
+    password: string;
+    gender: Gender;
+}
+
+export enum Gender {
+    MALE,
+    FEMALE,
+}

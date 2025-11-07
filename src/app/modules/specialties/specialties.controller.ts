@@ -1,11 +1,12 @@
 import { Request, Response } from 'express';
 import httpStatus from 'http-status';
+import pick from '../../helpers/pick';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { SpecialtiesService } from './specialties.service';
 
-const inserIntoDB = catchAsync(async (req: Request, res: Response) => {
-    const result = await SpecialtiesService.inserIntoDB(req);
+const CreateSpecialty = catchAsync(async (req: Request, res: Response) => {
+    const result = await SpecialtiesService.createSpecialty(req);
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
@@ -15,8 +16,9 @@ const inserIntoDB = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
-    const result = await SpecialtiesService.getAllFromDB();
+const GetAllSpecialties = catchAsync(async (req: Request, res: Response) => {
+    const options = pick(req.query, ['page', 'limit', 'sortBy', 'sortOrder']);
+    const result = await SpecialtiesService.getAllSpecialties(options);
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
@@ -25,9 +27,9 @@ const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-const deleteFromDB = catchAsync(async (req: Request, res: Response) => {
+const DeleteSpecialty = catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params;
-    const result = await SpecialtiesService.deleteFromDB(id);
+    const result = await SpecialtiesService.deleteSpecialty(id);
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
@@ -37,7 +39,7 @@ const deleteFromDB = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const SpecialtiesController = {
-    inserIntoDB,
-    getAllFromDB,
-    deleteFromDB,
+    CreateSpecialty,
+    GetAllSpecialties,
+    DeleteSpecialty,
 };

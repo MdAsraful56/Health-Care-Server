@@ -11,16 +11,16 @@ router.post(
     AppointmentController.CreateAppointment
 );
 
-router.get('/get-appointment/:id', (req, res) => {
-    // Handle fetching a specific appointment
-});
+router.get(
+    '/get-my-appointments',
+    auth(UserRole.PATIENT, UserRole.DOCTOR),
+    AppointmentController.GetMyAppointments
+);
 
-router.put('/update-appointment/:id', (req, res) => {
-    // Handle updating a specific appointment
-});
-
-router.delete('/delete-appointment/:id', (req, res) => {
-    // Handle deleting a specific appointment
-});
+router.patch(
+    '/appointment-status/:id',
+    auth(UserRole.ADMIN, UserRole.DOCTOR),
+    AppointmentController.UpdateAppointmentStatus
+);
 
 export const appointmentRouter = router;
