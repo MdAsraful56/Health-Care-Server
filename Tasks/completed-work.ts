@@ -1,4 +1,10 @@
 /**
+ *
+ * ! auth module . auth.service.ts file e token generate er somoy payload e userId add kora hoise. tai auth.controller.ts file e resetPassword function eo token ta headers theke nite hobe na ki cookies theke nite hobe ta clarify kora lagbe. ekhane ami headers theke nitechi.
+ * ! forgot password  a some probems chilo. tai oi part ta abar review kore dekhte hobe.
+ * ! see modules - 33 / 32 this solutions for more info.
+ *
+ *
  * 1. User + Patient Routes --- > first patient create, single get, all get (User + Patient), single update, single delete.
  *
  * 2. Admin Routes --- > admin create, single get, all get (Admin), single update, single delete.

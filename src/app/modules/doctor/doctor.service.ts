@@ -89,6 +89,18 @@ const getAllDoctors = async (filters: any, options: any) => {
         orderBy: {
             [sortBy]: sortOrder,
         },
+        include: {
+            doctorSpecialties: {
+                include: {
+                    specialities: true,
+                },
+            },
+            reviews: {
+                select: {
+                    rating: true,
+                },
+            },
+        },
     });
 
     return {
@@ -153,6 +165,11 @@ const updateDoctor = async (
                         specialities: true,
                     },
                 },
+                reviews: {
+                    select: {
+                        rating: true,
+                    },
+                },
             },
         });
 
@@ -169,6 +186,7 @@ const getSingleDoctor = async (id: string) => {
                     specialities: true,
                 },
             },
+            reviews: true,
         },
     });
 
