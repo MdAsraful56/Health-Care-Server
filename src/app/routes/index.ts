@@ -4,6 +4,7 @@ import { appointmentRouter } from '../modules/appointment/appointment.route';
 import { authRoutes } from '../modules/auth/auth.routes';
 import { DoctorRoutes } from '../modules/doctor/doctor.route';
 import { doctorScheduleRoutes } from '../modules/doctorSchedule/doctorSchedule.route';
+import { MetaRoutes } from '../modules/meta/meta.route';
 import { PatientRoutes } from '../modules/patient/patient.route';
 import { PaymentRoutes } from '../modules/payment/payment.route';
 import { prescriptionRouters } from '../modules/prescription/prescription.route';
@@ -63,6 +64,10 @@ const moduleRoutes = [
     {
         path: '/review',
         route: ReviewRoutes,
+    },
+    {
+        path: '/metadata',
+        route: MetaRoutes,
     },
 ];
 
