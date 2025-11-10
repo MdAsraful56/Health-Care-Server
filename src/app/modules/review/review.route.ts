@@ -11,4 +11,11 @@ router.post(
     ReviewController.CreateReview
 );
 
+router.get(
+    '/get-reviews-by-doctor/:doctorId',
+    ReviewController.GetReviewsByDoctor
+);
+
+router.get('/all-reviews', ReviewController.GetReviews);
+
 export const ReviewRoutes = router;

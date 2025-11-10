@@ -1,6 +1,7 @@
 import httpStatus from 'http-status';
 import prisma from '../../config/db';
 import ApiError from '../../error/ApiError';
+import { paginationHelper } from '../../helpers/paginationHelper';
 import { IJWTPayload } from '../../types/common';
 
 const createReview = async (payload: any, user: IJWTPayload) => {
@@ -55,6 +56,71 @@ const createReview = async (payload: any, user: IJWTPayload) => {
     });
 };
 
+const getReviewsByDoctor = async (doctorId: string, options: any) => {
+    const { page, limit, skip, sortBy, sortOrder } =
+        paginationHelper.calculatePagination(options);
+
+    const reviews = await prisma.review.findMany({
+        skip,
+        take: limit,
+        orderBy: {
+            [sortBy]: sortOrder,
+        },
+        where: {
+            doctorId: doctorId,
+        },
+    });
+
+    const total = await prisma.review.count({
+        skip,
+        take: limit,
+        orderBy: {
+            [sortBy]: sortOrder,
+        },
+        where: {
+            doctorId: doctorId,
+        },
+    });
+
+    return {
+        meta: {
+            page,
+            limit,
+            total,
+        },
+        data: reviews,
+    };
+};
+
+const getReviews = async (options: any) => {
+    const { page, limit, skip, sortBy, sortOrder } =
+        paginationHelper.calculatePagination(options);
+    const reviews = await prisma.review.findMany({
+        skip,
+        take: limit,
+        orderBy: {
+            [sortBy]: sortOrder,
+        },
+    });
+    const total = await prisma.review.count({
+        skip,
+        take: limit,
+        orderBy: {
+            [sortBy]: sortOrder,
+        },
+    });
+    return {
+        meta: {
+            page,
+            limit,
+            total,
+        },
+        data: reviews,
+    };
+};
+
 export const ReviewService = {
     createReview,
+    getReviewsByDoctor,
+    getReviews,
 };
