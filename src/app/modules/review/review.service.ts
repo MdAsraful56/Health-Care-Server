@@ -24,6 +24,13 @@ const createReview = async (payload: any, user: IJWTPayload) => {
         );
     }
 
+    if (appointmentData.status !== 'COMPLETED') {
+        throw new ApiError(
+            httpStatus.BAD_REQUEST,
+            'You can review only completed appointments!'
+        );
+    }
+
     return await prisma.$transaction(async (tnx) => {
         const result = await tnx.review.create({
             data: {

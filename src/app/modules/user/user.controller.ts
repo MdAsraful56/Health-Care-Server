@@ -16,31 +16,6 @@ const createPatient = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-// Get All Patients Controller
-const getAllPatients = catchAsync(async (req: Request, res: Response) => {
-    const options = pick(req.query, ['page', 'limit', 'sortBy', 'sortOrder']);
-    const filters = pick(req.query, ['searchTerm', 'status', 'role', 'email']);
-    const result = await UserService.getAllPatients(filters, options);
-    sendResponse(res, {
-        statusCode: 200,
-        success: true,
-        message: 'Patients retrieved successfully!',
-        data: result,
-    });
-});
-
-const getSinglePatient = catchAsync(async (req: Request, res: Response) => {
-    const patientId = req.params.id;
-    const result = await UserService.getSinglePatient(patientId);
-
-    sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: 'Patient retrieved successfully!',
-        data: result,
-    });
-});
-
 const UpdatePatient = catchAsync(async (req: Request, res: Response) => {
     const patientId = req.params.id;
     const result = await UserService.updatePatient(
@@ -51,17 +26,6 @@ const UpdatePatient = catchAsync(async (req: Request, res: Response) => {
         statusCode: httpStatus.OK,
         success: true,
         message: 'Patient updated successfully!',
-        data: result,
-    });
-});
-
-const DeletePatient = catchAsync(async (req: Request, res: Response) => {
-    const patientId = req.params.id;
-    const result = await UserService.deletePatient(patientId);
-    sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: 'Patient deleted successfully!',
         data: result,
     });
 });
@@ -83,9 +47,6 @@ const getAllUsers = catchAsync(async (req: Request, res: Response) => {
 
 export const UserController = {
     createPatient,
-    getAllPatients,
-    getSinglePatient,
     UpdatePatient,
-    DeletePatient,
     getAllUsers,
 };
