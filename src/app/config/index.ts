@@ -12,6 +12,13 @@ export default {
     jwt_refresh_secret: process.env.JWT_REFRESH_SECRET,
     jwt_access_expires_in: process.env.JWT_ACCESS_EXPIRES_IN,
     jwt_refresh_expires_in: process.env.JWT_REFRESH_EXPIRES_IN,
+    reset_token: process.env.RESET_TOKEN,
+    reset_token_expires_in: process.env.RESET_TOKEN_EXPIRES_IN,
+    reset_pass_link: process.env.RESET_PASS_LINK,
+    emailSender: {
+        email: process.env.EMAIL_SENDER_EMAIL,
+        app_pass: process.env.EMAIL_SENDER_APP_PASS,
+    },
     cloudinary: {
         cloud_name: process.env.CLOUDINARY_CLOUD_NAME || '',
         api_key: process.env.CLOUDINARY_API_KEY || '',
